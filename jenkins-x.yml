@@ -4,11 +4,13 @@ pipelineConfig:
     pullRequest:
       pipeline:
         agent:
-          image: gcr.io/jenkinsxio/builder-go
+          image: gcr.io/jenkinsxio/builder-go:2.1.98-727
         stages:
         - name: pr-checks
           options:
             containerOptions:
+              name: ""
+              resources: {}
               volumeMounts:
               - mountPath: /builder/home/.jx/localSecrets/currentCluster
                 name: local-secrets
@@ -36,14 +38,24 @@ pipelineConfig:
     release:
       pipeline:
         agent:
-          image: gcr.io/jenkinsxio/builder-go
+          image: gcr.io/jenkinsxio/builder-go:2.1.98-727
         environment:
         - name: DEPLOY_NAMESPACE
           value: jx
+        - name: GIT_AUTHOR_NAME
+          value: gelevb
+        - name: GIT_COMMITTER_NAME
+          value: gelevb
+        - name: GIT_AUTHOR_EMAIL
+          value: gelevb@icloud.com
+        - name: GIT_COMMITTER_EMAIL
+          value: gelevb@icloud.com
         stages:
         - name: release
           options:
             containerOptions:
+              name: ""
+              resources: {}
               volumeMounts:
               - mountPath: /builder/home/.jx/localSecrets/currentCluster
                 name: local-secrets
@@ -276,3 +288,11 @@ pipelineConfig:
             command: jx
             dir: /workspace/source/env
             name: verify-installation
+          - args:
+            - add
+            - app
+            - jx-app-ui
+            - --version
+            - 0.1.211
+            command: jx
+            name: install-jx-ui
