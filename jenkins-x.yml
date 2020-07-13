@@ -289,6 +289,18 @@ pipelineConfig:
             dir: /workspace/source/env
             name: verify-installation
           - args:
+            - step
+            - helm
+            - apply
+            - --boot
+            - --remote
+            - --no-vault
+            - --name
+            - terraform-operator
+            command: jx
+            dir: /workspace/source/systems/terraform
+            name: install-terraform-operator
+          - args:
             - add
             - app
             - jx-app-ui
