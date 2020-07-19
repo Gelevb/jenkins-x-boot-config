@@ -308,3 +308,22 @@ pipelineConfig:
             - 0.1.211
             command: jx
             name: install-jx-ui
+          - args:
+            - repo
+            - add
+            - spotinst
+            - https://spotinst.github.io/spotinst-kubernetes-helm-charts
+            command: helm
+            name: helm-add-repos
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - spotinst-controller
+            - spotinst/spotinst-kubernetes-cluster-controller
+            - --set spotinst.token=ba03e63ec8eb554ff49e953723f5d2d38a1a6b3102b5830580fc274e1ff0bb8a
+            - --set spotinst.account=act-7f76a910
+            - --set spotinst.clusterIdentifier=gleb-jx
+            command: jx
+            name: install-spotinst-operator
