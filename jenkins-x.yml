@@ -331,3 +331,36 @@ pipelineConfig:
             - --set spotinst.clusterIdentifier=$CLUSTER
             command: jx
             name: install-spotinst-operator
+          - args:
+            - -n
+            - jx
+            - create
+            - secret
+            - generic
+            - workspacesecrets
+            - --from-literal=$TERRAFORM
+            command: kubectl
+            name: terraform-operator-secret-key
+          - args:
+            - -n
+            - jx
+            - create
+            - secret
+            - generic
+            - terraformrc
+            - --from-file=credentials
+            command: kubectl
+            dir: /workspace/source/systems/terraform
+            name: terraform-operator-secret
+          - args:
+            - step
+            - helm
+            - apply
+            - --boot
+            - --remote
+            - --no-vault
+            - --name
+            - terraform-operator
+            command: jx
+            dir: /workspace/source/systems/terraform
+            name: install-terraform-operator
