@@ -289,18 +289,6 @@ pipelineConfig:
             dir: /workspace/source/env
             name: verify-installation
           - args:
-            - step
-            - helm
-            - apply
-            - --boot
-            - --remote
-            - --no-vault
-            - --name
-            - terraform-operator
-            command: jx
-            dir: /workspace/source/systems/terraform
-            name: install-terraform-operator
-          - args:
             - add
             - app
             - jx-app-ui
@@ -314,7 +302,14 @@ pipelineConfig:
             - spotinst
             - https://spotinst.github.io/spotinst-kubernetes-helm-charts
             command: helm
-            name: helm-add-repos
+            name: helm-add-spotinst-repo
+          - args:
+            - repo
+            - add
+            - hashicorp
+            - https://helm.releases.hashicorp.com
+            command: helm
+            name: helm-add-hashicorp-repo            
           - args:
             - ./env.sh
             command: source
