@@ -313,6 +313,7 @@ pipelineConfig:
           - args:
             - ./env.sh
             command: source
+            dir: /workspace/source
             name: env-inj
           - args:
             - step
@@ -350,6 +351,13 @@ pipelineConfig:
             dir: /workspace/source/systems/terraform
             name: terraform-operator-secret
           - args:
+            - apply
+            - -f
+            - app.terraform.io_workspaces_crd.yaml
+            command: kubectl
+            dir: /workspace/source/systems/terraform/crds
+            name: install-terraform-crd
+          - args:
             - step
             - helm
             - install
@@ -359,5 +367,4 @@ pipelineConfig:
             - terraform-operator
             - hashicorp/terraform
             command: jx
-            dir: /workspace/source/systems/terraform
             name: install-terraform-operator
