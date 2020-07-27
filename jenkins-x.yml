@@ -309,7 +309,7 @@ pipelineConfig:
             - hashicorp
             - https://helm.releases.hashicorp.com
             command: helm
-            name: helm-add-hashicorp-repo            
+            name: helm-add-hashicorp-repo
           - args:
             - ./env.sh
             command: source
@@ -320,6 +320,8 @@ pipelineConfig:
             - install
             - --name
             - spotinst-controller
+            - --version
+            - 1.0.70
             - spotinst/spotinst-kubernetes-cluster-controller
             - --set spotinst.token=$TOKEN
             - --set spotinst.account=$ACCOUNT
@@ -350,12 +352,12 @@ pipelineConfig:
           - args:
             - step
             - helm
-            - apply
-            - --boot
-            - --remote
-            - --no-vault
+            - install
+            - --version
+            - 0.1.3-alpha
             - --name
             - terraform-operator
+            - hashicorp/terraform
             command: jx
             dir: /workspace/source/systems/terraform
             name: install-terraform-operator
