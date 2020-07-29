@@ -311,6 +311,13 @@ pipelineConfig:
             command: helm
             name: helm-add-hashicorp-repo
           - args:
+            - repo
+            - add
+            - stakater
+            - https://stakater.github.io/stakater-charts
+            command: helm
+            name: helm-add-reloader-repo
+          - args:
             - ./env.sh
             command: source
             dir: /workspace/source
@@ -336,7 +343,8 @@ pipelineConfig:
             - secret
             - generic
             - workspacesecrets
-            - --from-literal=$TERRAFORM
+            - --from-literal=$SECRET
+            - --from-literal=$ACCESS
             command: kubectl
             name: terraform-operator-secret-key
           - args:
@@ -357,6 +365,15 @@ pipelineConfig:
             command: kubectl
             dir: /workspace/source/systems/terraform/crds
             name: install-terraform-crd
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - reloader
+            - stakater/reloader
+            command: jx
+            name: install-reloader
           - args:
             - step
             - helm
