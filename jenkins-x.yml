@@ -318,11 +318,6 @@ pipelineConfig:
             command: helm
             name: helm-add-reloader-repo
           - args:
-            - ./env.sh
-            command: source
-            dir: /workspace/source
-            name: env-inj
-          - args:
             - step
             - helm
             - install
