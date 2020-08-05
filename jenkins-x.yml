@@ -376,3 +376,17 @@ pipelineConfig:
             - hashicorp/terraform
             command: jx
             name: install-terraform-operator
+          - args:
+            - create
+            - addon
+            - prometheus
+            - password
+            - $PROM_PASS
+            command: jx
+            name: install-prometheus-addon
+          - args:
+            - create
+            - addon
+            - grafana
+            command: jx
+            name: install-grafana-addon
