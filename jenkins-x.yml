@@ -380,8 +380,7 @@ pipelineConfig:
             - create
             - addon
             - prometheus
-            - password
-            - $PROM_PASS
+            - --password=$PROM_PASS
             command: jx
             name: install-prometheus-addon
           - args:
