@@ -1,0 +1,4 @@
+appVersion: 7.1.1
+engine: gotpl
+name: grafana
+version: 0.0.1

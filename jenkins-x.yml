@@ -389,3 +389,22 @@ pipelineConfig:
             - grafana
             command: jx
             name: install-grafana-addon
+          - args:
+            - delete
+            - ingress
+            - grafana
+            command: kubectl
+            name: delete-grafana-ingress
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - grafana-ingress
+            - --version
+            - 0.0.1
+            - ./grafana-patched
+            - --set config.domain=$DOMAIN
+            command: jx
+            dir: /workspace/source/systems
+            name: install-grafana-ingress

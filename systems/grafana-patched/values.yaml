@@ -1,0 +1,5 @@
+config:
+  service: grafana
+  domain:
+
+
