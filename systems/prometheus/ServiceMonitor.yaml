@@ -2,15 +2,14 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   annotations:
-    meta.helm.sh/release-namespace: jx
+    meta.helm.sh/release-namespace: default
   generation: 1
   labels:
   name: cloudwatch-exporter
   namespace: default
 spec:
   endpoints:
-  - path: /metrics
-  - port: container-port
+  - port: http
   jobLabel: jobLabel
   namespaceSelector:
     matchNames:
