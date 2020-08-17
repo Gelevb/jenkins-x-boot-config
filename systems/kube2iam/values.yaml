@@ -1,0 +1,18 @@
+# Define your region. IAM is global, but actually attaching the role to your running pod requires knowing the region that pod runs in.
+aws:
+  region: "eu-west-1"
+
+# Replace the account number and an option role prefix to restrict the roles your pods can assume
+extraArgs:
+   base-role-arn: arn:aws:iam::654570355225:role
+
+# These settings are all that is required for EKS (unless you've decided to install Calico, but if you did, you hopefully know what you're doing)
+host:
+  iptables: true
+  interface: eni+
+
+# If your cluster is running RBAC (it is, right?), leave this alone
+rbac:
+  create: true
+
+#helm install kube2iam -f values.yaml --kube-context=arn:aws:eks:eu-west-1:654570355225:cluster/jx-cluster-staging stable/kube2iam

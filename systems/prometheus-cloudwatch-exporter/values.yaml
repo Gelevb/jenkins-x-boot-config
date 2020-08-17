@@ -1,0 +1,44 @@
+
+#
+
+config: |-
+  region: eu-west-1
+  period_seconds: 240
+  metrics:
+  - aws_namespace: AWS/EC2
+    aws_metric_name: CPUUtilization
+    aws_dimensions: [AutoScalingGroupName]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ELB
+    aws_metric_name: HealthyHostCount
+    aws_dimensions: [AvailabilityZone, LoadBalancerName]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ELB
+    aws_metric_name: UnHealthyHostCount
+    aws_dimensions: [AvailabilityZone, LoadBalancerName]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ELB
+    aws_metric_name: RequestCount
+    aws_dimensions: [AvailabilityZone, LoadBalancerName]
+    aws_statistics: [Sum]
+
+  - aws_namespace: AWS/ELB
+    aws_metric_name: Latency
+    aws_dimensions: [AvailabilityZone, LoadBalancerName]
+    aws_statistics: [Average]
+
+  - aws_namespace: AWS/ELB
+    aws_metric_name: SurgeQueueLength
+    aws_dimensions: [AvailabilityZone, LoadBalancerName]
+    aws_statistics: [Maximum, Sum]
+
+
+securityContext:
+  runAsUser: 65534
+  fsGroup: 65534
+
+aws:
+  role: jenkins-x-prometheus-cloudwatch-exporter

@@ -379,15 +379,10 @@ pipelineConfig:
           - args:
             - create
             - addon
-            - prometheus
-            - --password=$PROM_PASS
-            command: jx
-            name: install-prometheus-addon
-          - args:
-            - create
-            - addon
             - grafana
+            - --values=values.yaml
             command: jx
+            dir: /workspace/source/systems/grafana
             name: install-grafana-addon
           - args:
             - delete
@@ -408,3 +403,53 @@ pipelineConfig:
             command: jx
             dir: /workspace/source/systems
             name: install-grafana-ingress
+          - args:
+            - repo
+            - add
+            - bitnami
+            - https://charts.bitnami.com/bitnami
+            command: helm
+            name: helm-add-bitnami-repo
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - prometheus
+            - --namespace
+            - default
+            - --version
+            - 0.29.4
+            - bitnami/prometheus-operator
+            command: jx
+            dir: /workspace/source/systems/prometheus
+            name: install-prometheus-operator
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - kube2iam
+            - stable/kube2iam
+            - --set-file=values.yaml
+            command: jx
+            dir: /workspace/source/systems/kube2iam
+            name: install-kube2iam
+          - args:
+            - step
+            - helm
+            - install
+            - --name
+            - cloudwatch-exporter
+            - stable/prometheus-cloudwatch-exporter
+            - --set-file=values.yaml
+            command: jx
+            dir: /workspace/source/systems/prometheus-cloudwatch-exporter
+            name: install-cloudwatch-exporter
+          - args:
+            - apply
+            - -f
+            - ServiceMonitor.yaml
+            command: kubectl
+            dir: /workspace/source/systems/prometheus
+            name: install-prometheus-scarape-targets
