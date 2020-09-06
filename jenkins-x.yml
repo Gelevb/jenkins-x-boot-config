@@ -377,53 +377,12 @@ pipelineConfig:
             command: jx
             name: install-terraform-operator
           - args:
-            - create
-            - addon
-            - grafana
-            - --values=values.yaml
-            command: jx
-            dir: /workspace/source/systems/grafana
-            name: install-grafana-addon
-          - args:
-            - delete
-            - ingress
-            - grafana
-            command: kubectl
-            name: delete-grafana-ingress
-          - args:
-            - step
-            - helm
-            - install
-            - --name
-            - grafana-ingress
-            - --version
-            - 0.0.1
-            - ./grafana-patched
-            - --set config.domain=$DOMAIN
-            command: jx
-            dir: /workspace/source/systems
-            name: install-grafana-ingress
-          - args:
             - repo
             - add
             - bitnami
             - https://charts.bitnami.com/bitnami
             command: helm
             name: helm-add-bitnami-repo
-          - args:
-            - step
-            - helm
-            - install
-            - --name
-            - prometheus
-            - --namespace
-            - default
-            - --version
-            - 0.29.4
-            - bitnami/prometheus-operator
-            command: jx
-            dir: /workspace/source/systems/prometheus
-            name: install-prometheus-operator
           - args:
             - step
             - helm
@@ -453,3 +412,57 @@ pipelineConfig:
             command: kubectl
             dir: /workspace/source/systems/prometheus
             name: install-prometheus-scarape-targets
+          - args:
+            - apply
+            - -f rbac-config.yaml
+            command: kubectl
+            dir: /workspace/source/systems/tiller
+            name: tiller-rbac
+          - args:
+            - init
+            - --service-account tiller
+            command: helm
+            dir: /workspace/source/systems
+            name: helm-init
+          - args:
+            - repo
+            - add
+            - incubator
+            - https://kubernetes-charts-incubator.storage.googleapis.com
+            command: helm
+            name: helm-add-uncubator-repo
+          - args:
+            - deploy
+            - -p aws-alb-ingress-controller
+            command: skaffold
+            dir: /workspace/source/systems
+            name: aws-alb-ingress-controller
+          - args:
+            - deploy
+            - -p grafana-config
+            command: skaffold
+            dir: /workspace/source/systems
+            name: install-grafana-config
+          - args:
+            - deploy
+            - -p oauth-secret
+            command: skaffold
+            dir: /workspace/source/systems
+            name: install-oauth-secret
+          - args:
+            - deploy
+            - -p prometheus
+            command: skaffold
+            dir: /workspace/source/systems
+            name: install-prometheus
+          - args:
+            - add
+            - linkerd
+            - https://helm.linkerd.io/stable
+            command: helm
+            name: helm-add-linkerd-repo
+          - args:
+            - install | kubectl apply -f -
+            command: linkerd
+            dir: /workspace/source/systems/linkerd
+            name: install-linkerd

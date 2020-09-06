@@ -1,0 +1,5 @@
+aws-alb-ingress-controller:
+  clusterName: clusterName
+  autoDiscoverAwsRegion: true
+  autoDiscoverAwsVpcID: true
+

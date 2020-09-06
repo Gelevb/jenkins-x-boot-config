@@ -145,8 +145,7 @@ prometheus-operator:
     ## Pod annotations
     ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
     ##
-    podAnnotations: 
-      linkerd.io/inject: enabled
+    podAnnotations: {}
 
     ## Node Affinity. The value is evaluated as a template.
     ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#node-affinity
@@ -360,19 +359,24 @@ prometheus-operator:
       ##
       ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
       ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-      annotations: 
+      annotations: {
+        kubernetes.io/ingress.class: alb,
+        alb.ingress.kubernetes.io/auth-idp-oidc: '{"Issuer":"https://accounts.google.com","AuthorizationEndpoint":"https://accounts.google.com/o/oauth2/v2/auth","TokenEndpoint":"https://oauth2.googleapis.com/token","UserInfoEndpoint":"https://openidconnect.googleapis.com/v1/userinfo","SecretName":"oauth-secret"}',
+        alb.ingress.kubernetes.io/healthcheck-path: /graph,
+        alb.ingress.kubernetes.io/auth-type: oidc,
+        alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate,
+        alb.ingress.kubernetes.io/target-type: ip,
+        alb.ingress.kubernetes.io/scheme: internet-facing,
+        alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]',
+        alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+      }
       #  kubernetes.io/ingress.class: nginx
-        kubernetes.io/ingress.class: "nginx"
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-          grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-
 
       ## The list of hostnames to be covered with this ingress record.
       ## Most likely this will be just one host, but in the event more hosts are needed, this is an array
       hosts:
-        - name: prometheus.sidekube.net
-          path: /
+        - name: prometheus.jx-cluster-staging.livpo.com
+          path: /*
 
       ## The tls configuration for the ingress
       ## see: https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
@@ -546,8 +550,7 @@ prometheus-operator:
       labels: {}
       # app: prometheus
       # k8s-app: prometheus
-      annotations:
-        linkerd.io/inject: enabled
+      annotations: {}
 
     ## The remote_read spec configuration for Prometheus.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#remotereadspec
@@ -677,7 +680,7 @@ prometheus-operator:
     thanos:
       ## Create a Thanos Sidecar container
       ##
-      create: true
+      create: false
       ## Bitnami Thanos image
       ## ref: https://hub.docker.com/r/bitnami/thanos/tags/
       ##
@@ -877,18 +880,13 @@ prometheus-operator:
       ##
       ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
       ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-          grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-
+      annotations: {}
       #  kubernetes.io/ingress.class: nginx
 
       ## The list of hostnames to be covered with this ingress record.
       ## Most likely this will be just one host, but in the event more hosts are needed, this is an array
       hosts:
-        - name: alertmanager.sidekube.net
+        - name: alertmanager.jx-cluster-staging.livpo.com
           path: /
 
       ## The tls configuration for the ingress
@@ -941,20 +939,20 @@ prometheus-operator:
     config:
       global:
         resolve_timeout: 5m
-        slack_api_url: 'https://hooks.slack.com/services/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'
+        slack_api_url: 'https://hooks.slack.com/services/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'
       route:
         group_by: ['job']
-        group_wait: 5s
-        group_interval: 5s
-        repeat_interval: 30s
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
         receiver: 'slack-notifications'
         routes:
       receivers:
         - name: 'slack-notifications'
           slack_configs:
-            - channel: '#alert-tests'
+            - channel: '#doordawn-alerts'
               color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
-              title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ range .Alerts }} {{ .Labels.alertname }} {{ end }}'
+              title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
               title_link: '{{ template "slack.default.titlelink" . }}'
               text: |-
                 {{ range .Alerts }}
@@ -994,8 +992,7 @@ prometheus-operator:
     ##
     podMetadata:
       labels: {}
-      annotations:
-        linkerd.io/inject: enabled
+      annotations: {}
 
     ## Secrets that should be mounted into the Alertmanager Pods
     ##

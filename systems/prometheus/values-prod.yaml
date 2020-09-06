@@ -145,8 +145,7 @@ prometheus-operator:
     ## Pod annotations
     ## ref: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
     ##
-    podAnnotations: 
-      linkerd.io/inject: enabled
+    podAnnotations: {}
 
     ## Node Affinity. The value is evaluated as a template.
     ## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#node-affinity
@@ -360,13 +359,8 @@ prometheus-operator:
       ##
       ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
       ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-      annotations: 
+      annotations: {}
       #  kubernetes.io/ingress.class: nginx
-        kubernetes.io/ingress.class: "nginx"
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-          grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-
 
       ## The list of hostnames to be covered with this ingress record.
       ## Most likely this will be just one host, but in the event more hosts are needed, this is an array
@@ -546,8 +540,7 @@ prometheus-operator:
       labels: {}
       # app: prometheus
       # k8s-app: prometheus
-      annotations:
-        linkerd.io/inject: enabled
+      annotations: {}
 
     ## The remote_read spec configuration for Prometheus.
     ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#remotereadspec
@@ -677,7 +670,7 @@ prometheus-operator:
     thanos:
       ## Create a Thanos Sidecar container
       ##
-      create: true
+      create: false
       ## Bitnami Thanos image
       ## ref: https://hub.docker.com/r/bitnami/thanos/tags/
       ##
@@ -877,12 +870,7 @@ prometheus-operator:
       ##
       ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
       ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
-      annotations:
-        kubernetes.io/ingress.class: "nginx"
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          proxy_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-          grpc_set_header l5d-dst-override $service_name.$namespace.svc.cluster.local:$service_port;
-
+      annotations: {}
       #  kubernetes.io/ingress.class: nginx
 
       ## The list of hostnames to be covered with this ingress record.
@@ -941,24 +929,25 @@ prometheus-operator:
     config:
       global:
         resolve_timeout: 5m
-        slack_api_url: 'https://hooks.slack.com/services/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'
+        slack_api_url: 'https://hooks.slack.com/services/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'
       route:
         group_by: ['job']
-        group_wait: 5s
-        group_interval: 5s
-        repeat_interval: 30s
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 12h
         receiver: 'slack-notifications'
         routes:
       receivers:
         - name: 'slack-notifications'
           slack_configs:
-            - channel: '#alert-tests'
+            - channel: '#doordawn-alerts'
               color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
               title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ range .Alerts }} {{ .Labels.alertname }} {{ end }}'
               title_link: '{{ template "slack.default.titlelink" . }}'
+              pretext: '{{ .CommonAnnotations.summary }}'
               text: |-
                 {{ range .Alerts }}
-                  {{- if .Annotations.summary }} *{{ .Annotations.summary }}* {{- end }}
+                  {{- if .Annotations.summary }}*Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`{{- end }}
                   *Description:* {{ .Annotations.description }}{{ .Annotations.message }}
                   *Graph:* <{{ .GeneratorURL }}|:chart_with_upwards_trend:>{{ if or .Annotations.runbook .Annotations.runbook_url }} *Runbook:* <{{ .Annotations.runbook }}{{ .Annotations.runbook_url }}|:spiral_note_pad:>{{ end }}
                   *Details:*
@@ -994,8 +983,7 @@ prometheus-operator:
     ##
     podMetadata:
       labels: {}
-      annotations:
-        linkerd.io/inject: enabled
+      annotations: {}
 
     ## Secrets that should be mounted into the Alertmanager Pods
     ##

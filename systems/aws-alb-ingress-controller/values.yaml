@@ -1,0 +1,6 @@
+aws-alb-ingress-controller:
+  clusterName: jx-cluster-staging
+  autoDiscoverAwsRegion: true
+  autoDiscoverAwsVpcID: true
+  podAnnotations:
+   iam.amazonaws.com/role: jx-alb
