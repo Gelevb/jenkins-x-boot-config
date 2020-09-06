@@ -456,6 +456,7 @@ pipelineConfig:
             dir: /workspace/source/systems
             name: install-prometheus
           - args:
+            - repo
             - add
             - linkerd
             - https://helm.linkerd.io/stable
