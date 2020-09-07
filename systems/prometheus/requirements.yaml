@@ -1,4 +1,0 @@
-dependencies:
-- name: prometheus-operator
-  repository: "@bitnami"
-  version: 0.30.0
