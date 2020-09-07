@@ -349,6 +349,11 @@ pipelineConfig:
             dir: /workspace/source/k8s-monitoring
             name: install-kube2iam
           - args:
+            - install | kubectl apply -f -
+            command: linkerd
+            dir: /workspace/source/systems
+            name: install-linkerd
+          - args:
             - step
             - helm
             - install
@@ -418,7 +423,6 @@ pipelineConfig:
           - args:
             - deploy
             - -p jenkins-x-aws-alb-ingress-controller
-            - -n default
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-aws-alb-ingress-controller
@@ -447,8 +451,4 @@ pipelineConfig:
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-cloudwatch-exporter
-          - args:
-            - install | kubectl apply -f -
-            command: linkerd
-            dir: /workspace/source/systems/
-            name: install-linkerd
+
