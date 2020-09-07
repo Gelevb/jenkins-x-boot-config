@@ -1,4 +1,0 @@
-dependencies:
-- name: aws-alb-ingress-controller
-  repository: "@incubator"
-  version: 1.0.2

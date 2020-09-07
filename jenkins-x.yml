@@ -310,6 +310,27 @@ pipelineConfig:
             command: helm
             name: helm-add-reloader-repo
           - args:
+            - repo
+            - add
+            - bitnami
+            - https://charts.bitnami.com/bitnami
+            command: helm
+            name: helm-add-bitnami-repo
+          - args:
+            - repo
+            - add
+            - incubator
+            - https://kubernetes-charts-incubator.storage.googleapis.com
+            command: helm
+            name: helm-add-incubator-repo
+          - args:
+            - repo
+            - add
+            - linkerd
+            - https://helm.linkerd.io/stable
+            command: helm
+            name: helm-add-linkerd-repo
+          - args:
             - step
             - helm
             - install
@@ -377,42 +398,6 @@ pipelineConfig:
             command: jx
             name: install-terraform-operator
           - args:
-            - repo
-            - add
-            - bitnami
-            - https://charts.bitnami.com/bitnami
-            command: helm
-            name: helm-add-bitnami-repo
-          - args:
-            - step
-            - helm
-            - install
-            - --name
-            - kube2iam
-            - stable/kube2iam
-            - --set-file=values.yaml
-            command: jx
-            dir: /workspace/source/systems/kube2iam
-            name: install-kube2iam
-          - args:
-            - step
-            - helm
-            - install
-            - --name
-            - cloudwatch-exporter
-            - stable/prometheus-cloudwatch-exporter
-            - --set-file=values.yaml
-            command: jx
-            dir: /workspace/source/systems/prometheus-cloudwatch-exporter
-            name: install-cloudwatch-exporter
-          - args:
-            - apply
-            - -f
-            - ServiceMonitor.yaml
-            command: kubectl
-            dir: /workspace/source/systems/prometheus
-            name: install-prometheus-scarape-targets
-          - args:
             - apply
             - -f rbac-config.yaml
             command: kubectl
@@ -425,43 +410,35 @@ pipelineConfig:
             dir: /workspace/source/systems
             name: helm-init
           - args:
-            - repo
-            - add
-            - incubator
-            - https://kubernetes-charts-incubator.storage.googleapis.com
-            command: helm
-            name: helm-add-uncubator-repo
+            - deploy
+            - -p jenkins-x-aws-alb-ingress-controller
+            command: skaffold
+            dir: /workspace/source/k8s-monitoring
+            name: install-aws-alb-ingress-controller
           - args:
             - deploy
-            - -p aws-alb-ingress-controller
+            - -p jenkins-x-grafana-config
             command: skaffold
-            dir: /workspace/source/systems
-            name: aws-alb-ingress-controller
-          - args:
-            - deploy
-            - -p grafana-config
-            command: skaffold
-            dir: /workspace/source/systems
+            dir: /workspace/source/k8s-monitoring
             name: install-grafana-config
           - args:
             - deploy
             - -p oauth-secret
             command: skaffold
-            dir: /workspace/source/systems
+            dir: /workspace/source/k8s-monitoring
             name: install-oauth-secret
           - args:
             - deploy
-            - -p prometheus
+            - -p jenkins-x-prometheus
             command: skaffold
-            dir: /workspace/source/systems
+            dir: /workspace/source/k8s-monitoring
             name: install-prometheus
           - args:
-            - repo
-            - add
-            - linkerd
-            - https://helm.linkerd.io/stable
-            command: helm
-            name: helm-add-linkerd-repo
+            - deploy
+            - -p cloudwatch-exporter
+            command: skaffold
+            dir: /workspace/source/k8s-monitoring
+            name: install-cloudwatch-exporter
           - args:
             - install | kubectl apply -f -
             command: linkerd
