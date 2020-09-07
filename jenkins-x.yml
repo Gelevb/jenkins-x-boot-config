@@ -331,6 +331,12 @@ pipelineConfig:
             command: helm
             name: helm-add-linkerd-repo
           - args:
+            - deploy
+            - -p jenkins-x-kube2iam
+            command: skaffold
+            dir: /workspace/source/k8s-monitoring
+            name: install-kube2iam
+          - args:
             - step
             - helm
             - install
