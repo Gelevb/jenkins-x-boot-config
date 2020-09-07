@@ -447,7 +447,7 @@ pipelineConfig:
             name: install-prometheus
           - args:
             - deploy
-            - -p cloudwatch-exporter
+            - -p jenkins-x-cloudwatch-exporter
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-cloudwatch-exporter
