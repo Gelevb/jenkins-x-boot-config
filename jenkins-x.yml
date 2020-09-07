@@ -331,6 +331,18 @@ pipelineConfig:
             command: helm
             name: helm-add-linkerd-repo
           - args:
+            - apply
+            - -f rbac-config.yaml
+            command: kubectl
+            dir: /workspace/source/systems/tiller
+            name: tiller-rbac
+          - args:
+            - init
+            - --service-account tiller
+            command: helm
+            dir: /workspace/source/systems
+            name: helm-init
+          - args:
             - deploy
             - -p jenkins-x-kube2iam
             command: skaffold
@@ -404,20 +416,9 @@ pipelineConfig:
             command: jx
             name: install-terraform-operator
           - args:
-            - apply
-            - -f rbac-config.yaml
-            command: kubectl
-            dir: /workspace/source/systems/tiller
-            name: tiller-rbac
-          - args:
-            - init
-            - --service-account tiller
-            command: helm
-            dir: /workspace/source/systems
-            name: helm-init
-          - args:
             - deploy
             - -p jenkins-x-aws-alb-ingress-controller
+            - -n default
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-aws-alb-ingress-controller
@@ -436,6 +437,7 @@ pipelineConfig:
           - args:
             - deploy
             - -p jenkins-x-prometheus
+            - -n default
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-prometheus
