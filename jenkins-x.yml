@@ -450,5 +450,5 @@ pipelineConfig:
           - args:
             - install | kubectl apply -f -
             command: linkerd
-            dir: /workspace/source/systems/linkerd
+            dir: /workspace/source/systems/
             name: install-linkerd
