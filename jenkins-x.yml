@@ -435,7 +435,7 @@ pipelineConfig:
             name: install-grafana-config
           - args:
             - deploy
-            - -p oauth-secret
+            - -p jenkins-x-oauth-secret
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-oauth-secret
