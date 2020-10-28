@@ -337,10 +337,11 @@ pipelineConfig:
             dir: /workspace/source/systems/tiller
             name: tiller-rbac
           - args:
-            - init
-            - --service-account tiller
-            command: helm
-            dir: /workspace/source/systems
+            - apply
+            - -f
+            - deployment.yaml
+            command: kubectl
+            dir: /workspace/source/systems/helm-init
             name: helm-init
           - args:
             - deploy
@@ -448,6 +449,7 @@ pipelineConfig:
           - args:
             - deploy
             - -p jenkins-x-cloudwatch-exporter
+            - -n default
             command: skaffold
             dir: /workspace/source/k8s-monitoring
             name: install-cloudwatch-exporter
